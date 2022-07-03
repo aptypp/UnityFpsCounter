@@ -1,11 +1,10 @@
-using System;
 using System.Collections;
-using TMPro;
 using UnityEngine;
+using TMPro;
 
 namespace AVP.FPSCounter
 {
-    public class FPSCounter : MonoBehaviour
+    public class FrameCounter : MonoBehaviour
     {
         [Header("Texts")]
         [SerializeField] private TMP_Text _fpsText;
@@ -13,12 +12,12 @@ namespace AVP.FPSCounter
         
         [Header("Settings")]
         [SerializeField] [Range(1.0f, 60.0f)] private float _frequency = 15.0f;
+        
+        private Coroutine _counterRoutine;
 
-        private Coroutine _fpsCounterRoutine;
+        private void OnEnable() => _counterRoutine = StartCoroutine(FpsCounterRoutine());
 
-        private void OnEnable() => _fpsCounterRoutine = StartCoroutine(FpsCounterRoutine());
-
-        private void OnDisable() => StopCoroutine(_fpsCounterRoutine);
+        private void OnDisable() => StopCoroutine(_counterRoutine);
 
         private void UpdateTexts()
         {
