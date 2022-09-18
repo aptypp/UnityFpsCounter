@@ -13,11 +13,15 @@ namespace AVP.FPSCounter
         [Header("Settings")]
         [SerializeField] [Range(1.0f, 60.0f)] private float _frequency = 15.0f;
         
-        private Coroutine _counterRoutine;
+        private bool _isActive;
 
-        private void OnEnable() => _counterRoutine = StartCoroutine(FpsCounterRoutine());
+        private void OnEnable()
+        {
+            _isActive = true;
+            StartCoroutine(FpsCounterRoutine());
+        }
 
-        private void OnDisable() => StopCoroutine(_counterRoutine);
+        private void OnDisable() => _isActive = false;
 
         private void UpdateTexts()
         {
@@ -27,10 +31,13 @@ namespace AVP.FPSCounter
 
         private IEnumerator FpsCounterRoutine()
         {
-            while (true)
+            WaitForEndOfFrame frameDelay = new WaitForEndOfFrame();
+            WaitForSecondsRealtime delay = new WaitForSecondsRealtime(1.0f / _frequency);
+            while (_isActive)
             {
+                yield return delay;
+                yield return frameDelay;
                 UpdateTexts();
-                yield return new WaitForSecondsRealtime(1.0f / _frequency);
             }
         }
     }
